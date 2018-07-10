@@ -1,10 +1,12 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import UsernameForm from './UsernameForm'
+import Chat from './Chat'
 
 class App extends Component {
     state = {
         currentUsername: null,
-        currentId: null
+        currentId: null,
+        currentScreen: 'usernameForm'
     };
 
     onUsernameSubmitted = username => {
@@ -13,22 +15,29 @@ class App extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username })
+            body: JSON.stringify({username})
         })
-        .then(response => response.json())
-        .then(data => {
-            this.setState({
-                currentId: data.id,
-                currentUsername: data.name
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                    currentId: data.id,
+                    currentUsername: data.name,
+                    currentScreen: 'chat'
+                })
             })
-        })
-        .catch(error => {
-            console.error('error', error)
-        })
+            .catch(error => {
+                console.error('error', error)
+            })
     };
 
     render() {
-        return <UsernameForm handleSubmit={this.onUsernameSubmitted} />
+        if (this.state.currentScreen === 'usernameForm') {
+            return <UsernameForm handleSubmit={this.onUsernameSubmitted}/>
+        }
+
+        if (this.state.currentScreen === 'chat') {
+            return <Chat currentId={this.state.currentId}/>
+        }
     }
 }
 
